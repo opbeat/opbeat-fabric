@@ -113,6 +113,10 @@ AUTHOR_EMAIL = ""
 URL = "https://github.com/opbeat/opbeat-fabric"
 VERSION = __import__(PACKAGE).__version__
 
+install_requires = [
+    'fabric',
+]
+
 
 setup(
     name=NAME,
@@ -121,7 +125,7 @@ setup(
     long_description=read("README.md"),
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
-    license="BSD",
+    license="proprietary",
     url=URL,
     packages=find_packages(exclude=["tests.*", "tests"]),
     package_data=find_package_data(PACKAGE, only_in_packages=False),
@@ -135,5 +139,6 @@ setup(
         "Framework :: Django",
     ],
     zip_safe=False,
+    install_requires=install_requires,
 )
 
