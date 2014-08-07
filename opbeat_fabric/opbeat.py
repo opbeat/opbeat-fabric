@@ -11,7 +11,7 @@ from opbeat_fabric.utils import activate_env
 def register_machine():
     """Notify Opbeat of the deployment on an individual machine."""
     organization_id, app_id, secret_token = _get_opbeat_configuration()
-    path, venv = _get_paths()
+    path, venv = get_paths()
     with settings(warn_only=True), cd(path):
         run(
             "curl -v https://{server}/api/v1/organizations/{org_id}/apps/{app_id}/releases/ "
@@ -35,7 +35,7 @@ def register_machine():
 def register_deployment():
     """Notify Opbeat that a deployment has ended."""
     organization_id, app_id, secret_token = _get_opbeat_configuration()
-    path, venv = _get_paths()
+    path, venv = get_paths()
     print path, venv
     with settings(warn_only=True), cd(path):
         run(
@@ -56,7 +56,7 @@ def register_deployment():
 
 
 def _get_opbeat_configuration():
-    path, venv = _get_paths()
+    path, venv = get_paths()
     with prefix(activate_env(venv)), cd(path):
         out = run(
             'python -c "'
@@ -70,7 +70,7 @@ def _get_opbeat_configuration():
         return org_id, app_id, secret_token
 
 
-def _get_paths():
+def get_paths():
     for role in env.effective_roles:
         if hasattr(env, role + '_target'):
             return getattr(env, role + '_target'), getattr(env, role + '_venv')
