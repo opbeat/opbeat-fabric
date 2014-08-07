@@ -1,5 +1,5 @@
 import requests
-from fabric.api import run, settings, task, cd
+from fabric.api import run, settings, task, cd, env
 from .opbeat import get_paths
 
 def send_deployment():
