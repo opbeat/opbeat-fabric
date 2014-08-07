@@ -76,3 +76,4 @@ def get_paths():
             return getattr(env, role + '_target'), getattr(env, role + '_venv')
     warn('No paths for any roles in {} found'.format(env.effective_roles))
     return None, None
+
