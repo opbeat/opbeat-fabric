@@ -1,5 +1,5 @@
 import requests
-from fabric.api import task, cd, prefix
+from fabric.api import task, cd, prefix, run
 
 from .git import get_deployment_info
 from .opbeat import get_opbeat_configuration, get_paths
