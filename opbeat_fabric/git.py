@@ -28,7 +28,6 @@ def get_deployment_info():
     with settings(warn_only=True), cd(path):
         data = {
             'user': run('git config user.name'),
-            'branch': run('git rev-parse --abbrev-ref HEAD'),
             'revision': run('git log -n 1 --pretty=format:%H'),
             'server': env.deployment_server,
         }

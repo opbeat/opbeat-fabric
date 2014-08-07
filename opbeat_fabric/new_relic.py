@@ -6,14 +6,14 @@ from .opbeat import get_opbeat_configuration
 
 
 # @task
-def send_deployment():
+def send_deployment(branch='prod'):
     
     org_id, app_id, secret_token = get_opbeat_configuration()
     deployment_info = get_deployment_info()
 
     description = "Branch: {branch}. Organization: {org_id}."\
     				" App: {app_id}. Server: {server}".format(
-        branch=deployment_info['branch'],
+        branch=branch,
         server=deployment_info['server'],
         org_id=org_id,
         app_id=app_id
