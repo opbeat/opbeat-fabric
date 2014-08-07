@@ -6,6 +6,8 @@ from fabric.api import (
     cd, prefix, env, sudo, lcd, roles, execute
 )
 
+from .opbeat import get_paths
+
 
 def update_code(target, branch):
     print(
@@ -22,6 +24,7 @@ def update_code(target, branch):
         run('find `pwd` -name "*.pyc" -exec rm -f {} \;')
 
 def get_deployment_info():
+    path, venv = get_paths()
     with settings(warn_only=True), cd(path):
         data = {
             'user': run('git config user.name'),
