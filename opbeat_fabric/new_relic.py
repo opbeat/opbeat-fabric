@@ -1,14 +1,23 @@
 import requests
-from fabric.api import run, settings, task, cd, env
-from .opbeat import get_paths
+# from fabric.api import task
 
+from .git import get_deployment_info
+from .opbeat import get_opbeat_configuration
+
+
+# @task
 def send_deployment():
-    path, venv = get_paths()
-    with settings(warn_only=True), cd(path):
-        branch = run('`git rev-parse --abbrev-ref HEAD`')
-        revision = run('`git log -n 1 --pretty=format:%H`')
-        description = "Branch: {revision}. Server: {server}".format(
-            revision=revision, server=env.deployment_server)
+    
+    org_id, app_id, secret_token = get_opbeat_configuration()
+    deployment_info = get_deployment_info()
+
+    description = "Branch: {branch}. Organization: {org_id}."\
+    				" App: {app}. Server: {server}".format(
+        branch=deployment_info['branch'],
+        server=deployment_info['server'],
+        org_id=org_id,
+        app_id=app_id
+    )
 
     url =  "https://api.newrelic.com/deployments.xml"
     headers = {
@@ -16,10 +25,10 @@ def send_deployment():
     }
     data = {
         # "deployment[app_name]": "staging.opbeat.com",
-        "deployment[application_id]": "4391011",
-        "deployment[revision]": str(revision),
+        "deployment[application_id]": "4391011", #TODO get from config
+        "deployment[revision]": str(deployment_info['revision']),
         "deployment[description]": str(description),
-        "deployment[changelog]": "many hands make light work TEST",
-        "deployment[user]": "Emil Kjer TEST",
+        "deployment[user]": str(deployment_info['user']),
+        # "deployment[changelog]": "many hands make light work TEST",
     }
     response = requests.post(url, data=data, headers=headers)

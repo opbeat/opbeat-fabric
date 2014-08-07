@@ -10,7 +10,7 @@ from opbeat_fabric.utils import activate_env
 @task
 def register_machine():
     """Notify Opbeat of the deployment on an individual machine."""
-    organization_id, app_id, secret_token = _get_opbeat_configuration()
+    organization_id, app_id, secret_token = get_opbeat_configuration()
     path, venv = get_paths()
     with settings(warn_only=True), cd(path):
         run(
@@ -34,7 +34,7 @@ def register_machine():
 @task
 def register_deployment():
     """Notify Opbeat that a deployment has ended."""
-    organization_id, app_id, secret_token = _get_opbeat_configuration()
+    organization_id, app_id, secret_token = get_opbeat_configuration()
     path, venv = get_paths()
     print path, venv
     with settings(warn_only=True), cd(path):
@@ -55,7 +55,7 @@ def register_deployment():
         )
 
 
-def _get_opbeat_configuration():
+def get_opbeat_configuration():
     path, venv = get_paths()
     with prefix(activate_env(venv)), cd(path):
         out = run(
