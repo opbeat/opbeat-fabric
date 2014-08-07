@@ -28,7 +28,7 @@ def get_deployment_info():
     with settings(warn_only=True), cd(path):
         data = {
             'user': run('git config user.name'),
-            'revision': run('echo | git log -n 1 --pretty=format:%H'),
+            'revision': ("%s" % run('git log -n 1 --pretty=format:%H')),
             'server': env.deployment_server,
         }
     return data
