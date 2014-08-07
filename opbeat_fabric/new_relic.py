@@ -12,7 +12,7 @@ def send_deployment():
     deployment_info = get_deployment_info()
 
     description = "Branch: {branch}. Organization: {org_id}."\
-    				" App: {app}. Server: {server}".format(
+    				" App: {app_id}. Server: {server}".format(
         branch=deployment_info['branch'],
         server=deployment_info['server'],
         org_id=org_id,
