@@ -1,0 +1,4 @@
+*.pyc
+opbeat_fabric.egg-info
+dist/
+build/
