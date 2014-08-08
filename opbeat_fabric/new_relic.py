@@ -7,9 +7,8 @@ from .utils import activate_env
 
 
 def update_env_new_relic_configuration():
-	"""Set New Relic specific configurations in env"""
-
-	#TODO refactor this when the new settings are available
+    """Set New Relic specific configurations in env"""
+    #TODO refactor this when the new settings are available
     path, venv = get_paths()
     with prefix(activate_env(venv)), cd(path):
         out = run(
@@ -25,14 +24,14 @@ def update_env_new_relic_configuration():
 
 @task
 def send_deployment(branch='prod'):
-	"""Send deployment information to New Relic"""
+    """Send deployment information to New Relic"""
     update_env_new_relic_configuration()
     update_env_deployment_info()
 
     org_id, app_id, secret_token = get_opbeat_configuration()
 
     description = "Branch: {branch}. Revision: {revision}."\
-    	" Organization: {org_id}. App: {app_id}. Server: {server}".format(
+        " Organization: {org_id}. App: {app_id}. Server: {server}".format(
         branch=branch,
         server=env.deployment_server,
         org_id=org_id,
