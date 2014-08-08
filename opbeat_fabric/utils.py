@@ -5,7 +5,7 @@ from fabric.api import (
     local, run, settings, cd, lcd, prefix, env, task,
 )
 
-import .check
+import opbeat_fabric.checks as checks
 
 def activate_env(venv):
     return 'source %s/bin/activate' % venv
@@ -76,8 +76,8 @@ def run_local_checks(branch):
             bold=True,
         )
     
-    check.detect_requirement_changes(branch)
-    check.detect_migration_changes(branch)
+    checks.detect_requirement_changes(branch)
+    checks.detect_migration_changes(branch)
 
     print colors.green("*** Preflight checks passed", bold=True)
 

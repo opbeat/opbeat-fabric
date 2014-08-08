@@ -13,30 +13,33 @@ def _get_changed_file_list(branch):
         .format(branch=branch, base_branch=base_branch), capture=True)
     return result.split('\n')
 
-
 def detect_requirement_changes(branch):
-	"""Check if we have requirement changes in the deployment"""
-	changed_files = _get_changed_file_list(branch)
-    
-    if any(i for i in changed_files if 'requirements' in i):
+    """Check if we have requirement changes in the deployment"""
+    changed_files = _get_changed_file_list(branch)
+
+    relevant_files = [i for i in changed_files if 'requirements' in i] 
+    if any(relevant_files):
         print colors.red(
             "WARNING: We have requirement changes in this deployment:",
             bold=True,
         )
-        print colors.red(result)
+        for file in relevant_files:
+            print colors.red(file)
         return True
     return False
 
 
 def detect_migration_changes(branch):
-	"""Check if we have migrations in the deployment"""
-	changed_files = _get_changed_file_list(branch)
+    """Check if we have migrations in the deployment"""
+    changed_files = _get_changed_file_list(branch)
 
-    if any(i for i in changed_files if 'migrations' in i):
+    relevant_files = [i for i in changed_files if 'migrations' in i] 
+    if any(relevant_files):
         print colors.red(
             "WARNING: There are more than one migration in this deployment:",
             bold=True,
         )
-        print colors.red(result)
+        for file in relevant_files:
+            print colors.red(file)
         return True
     return False
