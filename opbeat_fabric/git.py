@@ -13,7 +13,7 @@ def update_code(target, branch):
     print(
         colors.cyan('*** Updating %s branch (%s)' % (target, branch), bold=True)
     )
-    run = print
+    # run = print
     with prefix(env.umask), cd(target):
 
         run('git fetch')
