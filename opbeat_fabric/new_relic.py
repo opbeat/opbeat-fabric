@@ -20,7 +20,7 @@ def update_env_new_relic_configuration():
             " settings.NEW_RELIC_API_URL"
             '"',
         )
-        new_relic_app_id, new_relic_api_id = out.split(' ')
+        new_relic_app_id, new_relic_api_id, new_relic_api_url = out.split(' ')
         env.new_relic_app_id = new_relic_app_id
         env.new_relic_api_id = new_relic_api_id
         env.new_relic_api_url = new_relic_api_url
