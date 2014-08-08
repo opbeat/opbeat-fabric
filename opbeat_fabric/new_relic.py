@@ -12,14 +12,14 @@ def get_new_relic_configuration():
         out = run(
             'python -c "'
             'from webapp import settings;'
-            "print settings.OPBEAT['NEW_RELIC_APP_ID'],"
-            " settings.OPBEAT['NEW_RELIC_API_ID']"
+            "print settings.NEW_RELIC_APP_ID,"
+            " settings.NEW_RELIC_API_ID"
             '"',
         )
         new_relic_app_id, new_relic_api_id = out.split(' ')
         return new_relic_app_id, new_relic_api_id
 
-# @task
+@task
 def send_deployment(branch='prod'):
     new_relic_app_id, new_relic_api_id = get_new_relic_configuration()
     org_id, app_id, secret_token = get_opbeat_configuration()
