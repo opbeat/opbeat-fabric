@@ -5,6 +5,7 @@ from fabric.api import (
     local, run, settings, cd, lcd, prefix, env, task,
 )
 
+import .check
 
 def activate_env(venv):
     return 'source %s/bin/activate' % venv
@@ -67,28 +68,16 @@ def run_local_checks(branch):
                 " or 'ssh-add')" % branch
             )
             abort("Cancelling")
-    
-    
-    base_branch = 'prod'
-    result = local('git diff --name-only origin/{base_branch}..origin/{branch}'
-        .format(branch=branch, base_branch=base_branch), capture=True)
-    result_list = result.split('\n')
-    
-    # Check if we have migrations in the deployment
-    if any(i for i in result_list if 'migrations' in i):
-        print colors.red(
-            "WARNING: There are more than one migration in this deployment:",
-            bold=True,
-        )
-        print colors.red(result)
 
-    # Check if we have requirement changes in the deployment
-    if any(i for i in result_list if 'requirements' in i):
+
+    if branch == 'prod':
         print colors.red(
-            "WARNING: We have requirement changes in this deployment:",
+            "WARNING: Deploying prod branch some checks won't be detected",
             bold=True,
         )
-        print colors.red(result)
+    
+    check.detect_requirement_changes(branch)
+    check.detect_migration_changes(branch)
 
     print colors.green("*** Preflight checks passed", bold=True)
 
