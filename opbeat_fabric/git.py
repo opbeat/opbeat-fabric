@@ -24,6 +24,8 @@ def update_code(target, branch):
         run('find `pwd` -name "*.pyc" -exec rm -f {} \;')
 
 def update_env_deployment_info():
+    """Set environment variables related to git"""
+    #TODO refactor this when the new settings are available
     path, venv = get_paths()
     with settings(warn_only=True), cd(path):
         env.git_user = str(run('git config user.name'))

@@ -1,5 +1,6 @@
-import requests
 from fabric.api import task, cd, prefix, run, env
+import requests
+from urlparse import urljoin
 
 from .git import update_env_deployment_info
 from .opbeat import get_opbeat_configuration, get_paths
@@ -15,12 +16,14 @@ def update_env_new_relic_configuration():
             'python -c "'
             'from webapp import settings;'
             "print settings.NEW_RELIC_APP_ID,"
-            " settings.NEW_RELIC_API_ID"
+            " settings.NEW_RELIC_API_ID,"
+            " settings.NEW_RELIC_API_URL"
             '"',
         )
         new_relic_app_id, new_relic_api_id = out.split(' ')
         env.new_relic_app_id = new_relic_app_id
         env.new_relic_api_id = new_relic_api_id
+        env.new_relic_api_url = new_relic_api_url
 
 @task
 def send_deployment(branch='prod'):
@@ -39,7 +42,7 @@ def send_deployment(branch='prod'):
         revision=env.git_revision
     )
 
-    url =  "https://api.newrelic.com/deployments.xml"
+    url =  urljoin(env.new_relic_api_url, "deployments.xml")
     headers = {
         "x-api-key": env.new_relic_api_id,
     }
