@@ -68,14 +68,24 @@ def run_local_checks(branch):
             )
             abort("Cancelling")
     
-    # Check if we have migrations in the deployment
+    
     base_branch = 'prod'
-    result = local('git diff --name-only origin/{base_branch}..origin/{branch}'\
-                   ' | grep migrations'.format(
-                     branch=branch, base_branch=base_branch), capture=True)
-    if not result.return_code:
+    result = local('git diff --name-only origin/{base_branch}..origin/{branch}'
+        .format(branch=branch, base_branch=base_branch), capture=True)
+    result_list = result.split('\n')
+    
+    # Check if we have migrations in the deployment
+    if any(i for i in result_list if 'migrations' in i):
         print colors.red(
-            "WARNING: There are more than one migration on this deployment:",
+            "WARNING: There are more than one migration in this deployment:",
+            bold=True,
+        )
+        print colors.red(result)
+
+    # Check if we have requirement changes in the deployment
+    if any(i for i in result_list if 'requirements' in i):
+        print colors.red(
+            "WARNING: We have requirement changes in this deployment:",
             bold=True,
         )
         print colors.red(result)
