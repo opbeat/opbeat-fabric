@@ -23,12 +23,8 @@ def update_code(target, branch):
         run('git pull origin  %s' % branch)
         run('find `pwd` -name "*.pyc" -exec rm -f {} \;')
 
-def get_deployment_info():
+def update_env_deployment_info():
     path, venv = get_paths()
     with settings(warn_only=True), cd(path):
-        data = {
-            'user': run('git config user.name'),
-            'revision': ("%s" % run('git log -n 1 --pretty=format:%H')),
-            'server': env.deployment_server,
-        }
-    return data
+        env.git_user = str(run('git config user.name'))
+        env.git_revision = ("%s" % run('git log -n 1 --pretty=format:%H'))

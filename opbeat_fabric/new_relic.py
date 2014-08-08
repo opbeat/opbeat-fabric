@@ -1,12 +1,15 @@
 import requests
-from fabric.api import task, cd, prefix, run
+from fabric.api import task, cd, prefix, run, env
 
-from .git import get_deployment_info
+from .git import update_env_deployment_info
 from .opbeat import get_opbeat_configuration, get_paths
 from .utils import activate_env
 
 
-def get_new_relic_configuration():
+def update_env_new_relic_configuration():
+	"""Set New Relic specific configurations in env"""
+
+	#TODO refactor this when the new settings are available
     path, venv = get_paths()
     with prefix(activate_env(venv)), cd(path):
         out = run(
@@ -17,32 +20,33 @@ def get_new_relic_configuration():
             '"',
         )
         new_relic_app_id, new_relic_api_id = out.split(' ')
-        return new_relic_app_id, new_relic_api_id
+        env.new_relic_app_id = new_relic_app_id
+        env.new_relic_api_id = new_relic_api_id
 
 @task
 def send_deployment(branch='prod'):
-    new_relic_app_id, new_relic_api_id = get_new_relic_configuration()
+	"""Send deployment information to New Relic"""
+    update_env_new_relic_configuration()
+    update_env_deployment_info()
+
     org_id, app_id, secret_token = get_opbeat_configuration()
-    deployment_info = get_deployment_info()
 
     description = "Branch: {branch}. Revision: {revision}."\
     	" Organization: {org_id}. App: {app_id}. Server: {server}".format(
         branch=branch,
-        server=deployment_info['server'],
+        server=env.deployment_server,
         org_id=org_id,
         app_id=app_id,
-        revision=deployment_info['revision']
+        revision=env.git_revision
     )
 
     url =  "https://api.newrelic.com/deployments.xml"
     headers = {
-        "x-api-key": new_relic_api_id,
+        "x-api-key": env.new_relic_api_id,
     }
     data = {
-        # "deployment[app_name]": "staging.opbeat.com",
-        "deployment[application_id]": new_relic_app_id,
-        "deployment[description]": str(description),
-        "deployment[user]": str(deployment_info['user']),
-        # "deployment[changelog]": "many hands make light work TEST",
+        "deployment[application_id]": env.new_relic_app_id,
+        "deployment[description]": description,
+        "deployment[user]": env.git_user,
     }
     response = requests.post(url, data=data, headers=headers)
