@@ -5,7 +5,6 @@ from fabric.api import (
     local, run, settings, cd, lcd, prefix, env, task,
 )
 
-import opbeat_fabric.checks as checks
 
 def activate_env(venv):
     return 'source %s/bin/activate' % venv
@@ -25,61 +24,6 @@ def install_requirements(target, venv_dir):
             venv_dir))
 
 
-def run_local_checks(branch):
-    # Check that we have *branch* checked out
-    current_branch = local("git rev-parse --abbrev-ref HEAD", capture=True)
-    if current_branch != branch:
-        print colors.red(
-            'Must be on branch "%s". Current branch is "%s"' % (
-                branch,
-                current_branch,
-            ),
-            bold=True,
-        )
-        abort("Cancelling")
-
-    # Check that local *branch* is pushed to remote
-    remote_rev = local(
-        "git ls-remote -h origin %s| awk '{print $1}'" % branch, capture=True)
-    if not remote_rev:
-        abort(
-            colors.red(
-                "Branch '%s' has not been pushed to remote." % (branch,),
-                bold=True,
-            )
-        )
-
-    local_rev = local("git rev-parse HEAD", capture=True)
-    if local_rev != remote_rev:
-        abort(
-            colors.red(
-                "There a local commits not in remote (hint: git push).",
-                bold=True,
-            )
-        )
-
-    # Check that prod has been merged into *branch*
-    local("git fetch")
-    with settings(warn_only=True):
-        result = local("git branch -a --no-merged |grep -q prod")
-        if not result.return_code:
-            print colors.red(
-                "*** 'Prod' not MERGED into '%s' (hint: 'git pull origin prod'"\
-                " or 'ssh-add')" % branch
-            )
-            abort("Cancelling")
-
-
-    if branch == 'prod':
-        print colors.red(
-            "WARNING: Deploying prod branch some checks won't be detected",
-            bold=True,
-        )
-    
-    checks.detect_requirement_changes(branch)
-    checks.detect_migration_changes(branch)
-
-    print colors.green("*** Preflight checks passed", bold=True)
 
 
 @task

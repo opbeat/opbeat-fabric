@@ -43,3 +43,73 @@ def detect_migration_changes(branch):
             print colors.red(file)
         return True
     return False
+
+def detect_current_branch_prod(branch):
+    if branch == 'prod':
+        print colors.red(
+            "WARNING: Deploying prod branch some checks won't be detected",
+            bold=True,
+        )
+
+
+def detect_prod_merged_in(branch):
+    """Check that prod has been merged into *branch*"""
+    local("git fetch")
+    with settings(warn_only=True):
+        result = local("git branch -a --no-merged |grep -q prod")
+        if not result.return_code:
+            print colors.red(
+                "*** 'Prod' not MERGED into '%s' (hint: 'git pull origin prod'"\
+                " or 'ssh-add')" % branch
+            )
+            abort("Cancelling")
+
+
+def detect_missing_push():
+    local_rev = local("git rev-parse HEAD", capture=True)
+    if local_rev != remote_rev:
+        abort(
+            colors.red(
+                "There a local commits not in remote (hint: git push).",
+                bold=True,
+            )
+        )
+
+def detect_local_branch_pushed(branch):
+    """Check that local *branch* is pushed to remote"""
+    remote_rev = local(
+        "git ls-remote -h origin %s| awk '{print $1}'" % branch, capture=True)
+    if not remote_rev:
+        abort(
+            colors.red(
+                "Branch '%s' has not been pushed to remote." % (branch,),
+                bold=True,
+            )
+        )
+
+def detecth_if_deploy_branch_is_is_current(branch):
+    """Check that we have *branch* checked out"""
+    current_branch = local("git rev-parse --abbrev-ref HEAD", capture=True)
+    if current_branch != branch:
+        print colors.red(
+            'Must be on branch "%s". Current branch is "%s"' % (
+                branch,
+                current_branch,
+            ),
+            bold=True,
+        )
+        abort("Cancelling")
+
+
+
+def run_local_checks(branch):
+    detecth_if_deploy_branch_is_is_current(branch)
+    detect_local_branch_pushed(branch)
+    detect_missing_push()
+    detect_prod_merged_in(branch)
+    detect_current_branch_prod(branch)
+    detect_requirement_changes(branch)
+    detect_migration_changes(branch)
+
+    print colors.green("*** Preflight checks passed", bold=True)
+    
