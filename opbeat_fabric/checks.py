@@ -13,6 +13,11 @@ def _get_changed_file_list(branch):
         .format(branch=branch, base_branch=base_branch), capture=True)
     return result.split('\n')
 
+def _get_remote_revision(branch):
+    return local(
+        "git ls-remote -h origin %s| awk '{print $1}'" % branch, capture=True)
+
+
 def detect_requirement_changes(branch):
     """Check if we have requirement changes in the deployment"""
     changed_files = _get_changed_file_list(branch)
@@ -65,7 +70,8 @@ def detect_prod_merged_in(branch):
             abort("Cancelling")
 
 
-def detect_missing_push():
+def detect_missing_push(branch):
+    remote_rev = _get_remote_revision(branch)
     local_rev = local("git rev-parse HEAD", capture=True)
     if local_rev != remote_rev:
         abort(
@@ -77,8 +83,7 @@ def detect_missing_push():
 
 def detect_local_branch_pushed(branch):
     """Check that local *branch* is pushed to remote"""
-    remote_rev = local(
-        "git ls-remote -h origin %s| awk '{print $1}'" % branch, capture=True)
+    remote_rev = _get_remote_revision(branch)
     if not remote_rev:
         abort(
             colors.red(
@@ -105,7 +110,7 @@ def detecth_if_deploy_branch_is_is_current(branch):
 def run_local_checks(branch):
     detecth_if_deploy_branch_is_is_current(branch)
     detect_local_branch_pushed(branch)
-    detect_missing_push()
+    detect_missing_push(branch)
     detect_prod_merged_in(branch)
     detect_current_branch_prod(branch)
     detect_requirement_changes(branch)
