@@ -73,7 +73,7 @@ def run_local_checks(branch):
                      branch=branch, base_branch=base_branch), capture=True)
     if not result.return_code:
         print colors.red(
-            "WARNING: There are more than one migration on this deployment:",
+            "WARNING: There are migrations in this deployment:",
             bold=True,
         )
         print colors.red(result)
