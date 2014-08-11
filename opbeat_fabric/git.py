@@ -28,5 +28,5 @@ def update_env_deployment_info():
     #TODO refactor this when the new settings are available
     path, venv = get_paths()
     with settings(warn_only=True), cd(path):
-        env.git_user = str(run('git config user.name'))
-        env.git_revision = ("%s" % run('git log -n 1 --pretty=format:%H'))
+        env.git_user = str(local('git config user.name'))
+        env.git_revision = ("%s" % local('git log -n 1 --pretty=format:%H'))
