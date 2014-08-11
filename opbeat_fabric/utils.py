@@ -63,12 +63,12 @@ def run_local_checks(branch):
         result = local("git branch -a --no-merged |grep -q prod")
         if not result.return_code:
             print colors.red(
-                "*** 'Prod' not MERGED into '%s' (hint: 'git pull origin prod'"\
+                "*** 'Prod' not MERGED into '%s' (hint: 'git pull origin prod'"
                 " or 'ssh-add')" % branch
             )
             abort("Cancelling")
     base_branch = 'prod'
-    result = local('git diff --name-only origin/{base_branch}..origin/{branch}'\
+    result = local('git diff --name-only origin/{base_branch}..origin/{branch}'
                    ' | grep migrations'.format(
                      branch=branch, base_branch=base_branch), capture=True)
     if not result.return_code:
