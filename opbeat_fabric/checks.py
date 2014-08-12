@@ -30,9 +30,6 @@ def detect_requirement_changes(branch):
         )
         for file in relevant_files:
             print colors.red(file)
-        return True
-    return False
-
 
 def detect_migration_changes(branch):
     """Check if we have migrations in the deployment"""
@@ -41,13 +38,11 @@ def detect_migration_changes(branch):
     relevant_files = [i for i in changed_files if 'migrations' in i] 
     if any(relevant_files):
         print colors.red(
-            "WARNING: There are more than one migration in this deployment:",
+            "WARNING: You have migrations in this deployment:",
             bold=True,
         )
         for file in relevant_files:
             print colors.red(file)
-        return True
-    return False
 
 def detect_current_branch_prod(branch):
     if branch == 'prod':
@@ -56,7 +51,6 @@ def detect_current_branch_prod(branch):
             bold=True,
         )
 
-
 def detect_prod_merged_in(branch):
     """Check that prod has been merged into *branch*"""
     local("git fetch")
@@ -64,11 +58,10 @@ def detect_prod_merged_in(branch):
         result = local("git branch -a --no-merged |grep -q prod")
         if not result.return_code:
             print colors.red(
-                "*** 'Prod' not MERGED into '%s' (hint: 'git pull origin prod'"\
+                "*** 'Prod' not MERGED into '%s' (hint: 'git pull origin prod'"
                 " or 'ssh-add')" % branch
             )
             abort("Cancelling")
-
 
 def detect_missing_push(branch):
     remote_rev = _get_remote_revision(branch)
@@ -104,7 +97,6 @@ def detecth_if_deploy_branch_is_is_current(branch):
             bold=True,
         )
         abort("Cancelling")
-
 
 
 def run_local_checks(branch):
