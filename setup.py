@@ -10,7 +10,10 @@ from setuptools import setup, find_packages
 
 
 def read(fname):
-    return codecs.open(os.path.join(os.path.dirname(__file__), fname)).read()
+    file = codecs.open(os.path.join(os.path.dirname(__file__), fname)).read()
+    if not isinstance(file, str):
+        return file.decode('utf-8')
+    return file
 
 
 # Provided as an attribute, so you can append to these instead
