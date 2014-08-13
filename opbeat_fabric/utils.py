@@ -25,7 +25,7 @@ def install_requirements(target, venv_dir):
 
 
 @task
-def test(*args):
+def django_test(*args):
     """
     Run tests locally.
 
