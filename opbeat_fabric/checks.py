@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import sys
+
 from fabric import colors
 from fabric.utils import abort
 from fabric.api import (
-    local, run, settings, cd, lcd, prefix, env, task,
+    local, run, settings, cd, lcd, prefix, env, task, confirm
 )
 
 
@@ -31,6 +33,8 @@ def detect_requirement_changes(branch):
         )
         for file in relevant_files:
             print colors.red(file)
+        return True
+    return False
 
 
 def detect_migration_changes(branch):
@@ -45,6 +49,8 @@ def detect_migration_changes(branch):
         )
         for file in relevant_files:
             print colors.red(file)
+        return True
+    return False
 
 
 def detect_current_branch_prod(branch):
@@ -104,6 +110,12 @@ def detect_if_deploy_branch_is_current(branch):
             bold=True,
         )
         abort("Cancelling")
+
+
+def prompt_on_migration_changes(branch):
+    if detect_migration_changes(branch):
+        if not confirm("Continue?"):
+             sys.exit()
 
 
 def run_local_checks(branch):
