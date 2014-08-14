@@ -4,8 +4,10 @@ import sys
 from fabric import colors
 from fabric.utils import abort
 from fabric.api import (
-    local, run, settings, cd, lcd, prefix, env, task, confirm
+    local, run, settings, cd, lcd, prefix, env, task
 )
+from fabric.contrib.console import confirm
+
 
 
 def _get_changed_file_list(branch):
