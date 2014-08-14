@@ -6,12 +6,13 @@ from fabric.api import (
 )
 
 
-
 def _get_changed_file_list(branch):
     base_branch = 'prod'
     result = local('git diff --name-only origin/{base_branch}..origin/{branch}'
-        .format(branch=branch, base_branch=base_branch), capture=True)
+                   .format(branch=branch, base_branch=base_branch),
+                   capture=True)
     return result.split('\n')
+
 
 def _get_remote_revision(branch):
     return local(
@@ -22,7 +23,7 @@ def detect_requirement_changes(branch):
     """Check if we have requirement changes in the deployment"""
     changed_files = _get_changed_file_list(branch)
 
-    relevant_files = [i for i in changed_files if 'requirements' in i] 
+    relevant_files = [i for i in changed_files if 'requirements' in i]
     if any(relevant_files):
         print colors.red(
             "WARNING: We have requirement changes in this deployment:",
@@ -31,11 +32,12 @@ def detect_requirement_changes(branch):
         for file in relevant_files:
             print colors.red(file)
 
+
 def detect_migration_changes(branch):
     """Check if we have migrations in the deployment"""
     changed_files = _get_changed_file_list(branch)
 
-    relevant_files = [i for i in changed_files if 'migrations' in i] 
+    relevant_files = [i for i in changed_files if 'migrations' in i]
     if any(relevant_files):
         print colors.red(
             "WARNING: You have migrations in this deployment:",
@@ -44,12 +46,14 @@ def detect_migration_changes(branch):
         for file in relevant_files:
             print colors.red(file)
 
+
 def detect_current_branch_prod(branch):
     if branch == 'prod':
         print colors.red(
             "WARNING: Deploying prod branch some checks won't be detected",
             bold=True,
         )
+
 
 def detect_prod_merged_in(branch):
     """Check that prod has been merged into *branch*"""
@@ -63,6 +67,7 @@ def detect_prod_merged_in(branch):
             )
             abort("Cancelling")
 
+
 def detect_missing_push(branch):
     remote_rev = _get_remote_revision(branch)
     local_rev = local("git rev-parse HEAD", capture=True)
@@ -74,6 +79,7 @@ def detect_missing_push(branch):
             )
         )
 
+
 def detect_local_branch_pushed(branch):
     """Check that local *branch* is pushed to remote"""
     remote_rev = _get_remote_revision(branch)
@@ -84,6 +90,7 @@ def detect_local_branch_pushed(branch):
                 bold=True,
             )
         )
+
 
 def detecth_if_deploy_branch_is_is_current(branch):
     """Check that we have *branch* checked out"""
@@ -109,4 +116,3 @@ def run_local_checks(branch):
     detect_migration_changes(branch)
 
     print colors.green("*** Preflight checks passed", bold=True)
-    
