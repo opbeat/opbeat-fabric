@@ -92,7 +92,7 @@ def detect_local_branch_pushed(branch):
         )
 
 
-def detecth_if_deploy_branch_is_is_current(branch):
+def detect_if_deploy_branch_is_current(branch):
     """Check that we have *branch* checked out"""
     current_branch = local("git rev-parse --abbrev-ref HEAD", capture=True)
     if current_branch != branch:
@@ -107,7 +107,7 @@ def detecth_if_deploy_branch_is_is_current(branch):
 
 
 def run_local_checks(branch):
-    detecth_if_deploy_branch_is_is_current(branch)
+    detect_if_deploy_branch_is_current(branch)
     detect_local_branch_pushed(branch)
     detect_missing_push(branch)
     detect_prod_merged_in(branch)
