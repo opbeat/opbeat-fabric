@@ -115,7 +115,7 @@ def detect_if_deploy_branch_is_current(branch):
 def prompt_on_migration_changes(branch):
     if detect_migration_changes(branch):
         if not confirm("Continue?"):
-             sys.exit()
+            sys.exit()
 
 
 def run_local_checks(branch):
