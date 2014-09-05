@@ -46,6 +46,7 @@ def transfer_asset_metadata():
         asset_target
     )
     asset_target = os.path.join(env.web_target, 'frontend', 'static', 'build')
+    run("mkdir -p %s" % asset_target)
     put(os.path.join(env.asset_build_dir, "app-for-500.css"), asset_target)
 
     # run("mkdir -p %s" % asset_target + "/build/")
