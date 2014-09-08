@@ -8,9 +8,11 @@ from opbeat_fabric.utils import activate_env
 
 
 @task
-def register_machine():
+def register_machine(organization_id=None, app_id=None, secret_token=None):
     """Notify Opbeat of the deployment on an individual machine."""
-    organization_id, app_id, secret_token = get_opbeat_configuration()
+    organization_id, app_id, secret_token = get_opbeat_configuration(
+        organization_id, app_id, secret_token
+    )
     path, venv = get_paths()
     with settings(warn_only=True), cd(path):
         run(
@@ -32,9 +34,12 @@ def register_machine():
 
 
 @task
-def register_deployment():
+def register_deployment(organization_id=None, app_id=None, secret_token=None):
     """Notify Opbeat that a deployment has ended."""
-    organization_id, app_id, secret_token = get_opbeat_configuration()
+    organization_id, app_id, secret_token = get_opbeat_configuration(
+        organization_id, app_id, secret_token
+    )
+
     path, venv = get_paths()
     print path, venv
     with settings(warn_only=True), cd(path):
@@ -55,19 +60,24 @@ def register_deployment():
         )
 
 
-def get_opbeat_configuration():
-    path, venv = get_paths()
-    with prefix(activate_env(venv)), cd(path):
-        out = run(
-            'python -c "'
-            'from webapp import settings;'
-            "print settings.OPBEAT['ORGANIZATION_ID'],"
-            " settings.OPBEAT['APP_ID'],"
-            " settings.OPBEAT['SECRET_TOKEN']"
-            '"',
-        )
-        org_id, app_id, secret_token = out.split(' ')
-        return org_id, app_id, secret_token
+def get_opbeat_configuration(organization_id=None, app_id=None, secret_token=None):
+    if organization_id is None or app_id is None or secret_token is None:
+        path, venv = get_paths()
+        with prefix(activate_env(venv)), cd(path):
+            out = run(
+                'python -c "'
+                'from webapp import settings;'
+                "print settings.OPBEAT['ORGANIZATION_ID'],"
+                " settings.OPBEAT['APP_ID'],"
+                " settings.OPBEAT['SECRET_TOKEN']"
+                '"',
+            )
+            new_org_id, new_app_id, new_secret_token = out.split(' ')
+            organization_id = organization_id or new_org_id
+            app_id = app_id or new_app_id
+            secret_token = secret_token or new_secret_token
+
+    return organization_id, app_id, secret_token
 
 
 def get_paths():
