@@ -8,9 +8,22 @@ from fabric.api import run, env, abort
 from fabric.contrib.console import confirm
 
 
-def deregister_from_elb():
+def _get_elbs():
+    elbs = []
     if env.elb_name:
-        run('elb-dance deregister {}'.format(env.elb_name))
+        elbs = [env.elb_name]
+    elif env.elb_names:
+        elbs = env.elb_names
+
+    return elbs
+
+
+def deregister_from_elb():
+    elbs = _get_elbs()
+    if elbs:
+        for elb in elbs:
+            run('elb-dance deregister {}'.format(elb))
+
         print "Waiting for instance to be fully deregistered"
         # No way to know when it's really out, but empirically seems to be around
         # 10 secs.
@@ -19,8 +32,10 @@ def deregister_from_elb():
 
 
 def register_with_elb():
-    if env.elb_name:
-        run('elb-dance register {}'.format(env.elb_name))
+    elbs = _get_elbs()
+
+    for elb in elbs:
+        run('elb-dance register {}'.format(elb))
 
 
 def setup_instance(
