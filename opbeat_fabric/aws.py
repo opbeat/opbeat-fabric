@@ -10,9 +10,9 @@ from fabric.contrib.console import confirm
 
 def _get_elbs():
     elbs = []
-    if env.elb_name:
+    if hasattr(env, 'elb_name') and env.elb_name:
         elbs = [env.elb_name]
-    elif env.elb_names:
+    elif hasattr(env, 'elb_names') and env.elb_names:
         elbs = env.elb_names
 
     return elbs
