@@ -65,7 +65,7 @@ def get_opbeat_configuration(organization_id=None, app_id=None, secret_token=Non
         path, venv = get_paths()
         with prefix(activate_env(venv)), cd(path):
             out = run(
-                'python -c "'
+                'DJANGO_SETTINGS_MODULE=webapp.settings python -c "'
                 'from webapp import settings;'
                 "print settings.OPBEAT['ORGANIZATION_ID'],"
                 " settings.OPBEAT['APP_ID'],"

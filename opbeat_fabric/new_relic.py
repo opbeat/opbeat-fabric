@@ -13,7 +13,7 @@ def update_env_new_relic_configuration():
     path, venv = get_paths()
     with prefix(activate_env(venv)), cd(path):
         out = run(
-            'python -c "'
+            'DJANGO_SETTINGS_MODULE=webapp.settings python -c "'
             'from webapp import settings;'
             "print settings.NEW_RELIC_APP_ID,"
             " settings.NEW_RELIC_API_ID,"
