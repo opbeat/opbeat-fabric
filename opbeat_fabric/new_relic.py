@@ -31,7 +31,7 @@ def send_deployment(branch='prod'):
     update_env_new_relic_configuration()
     update_env_deployment_info()
 
-    org_id, app_id, secret_token = get_opbeat_configuration()
+    org_id, app_id, secret_token, server = get_opbeat_configuration()
 
     description = "Branch: {branch}. Revision: {revision}."\
         " Organization: {org_id}. App: {app_id}. Server: {server}".format(
