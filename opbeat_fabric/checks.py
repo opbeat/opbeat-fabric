@@ -67,7 +67,7 @@ def detect_prod_merged_in(branch):
     """Check that prod has been merged into *branch*"""
     local("git fetch")
     with settings(warn_only=True):
-        result = local('git branch -a --no-merged | grep -q "prod$"')
+        result = local('git branch -a --no-merged | grep -q "\sprod$"')
         if not result.return_code:
             print colors.red(
                 "*** 'Prod' not MERGED into '%s' (hint: 'git pull origin prod'"
