@@ -64,10 +64,21 @@ def detect_current_branch_prod(branch):
 
 
 def detect_prod_merged_in(branch):
-    """Check that prod has been merged into *branch*"""
+    """Check that prod has been merged into *branch*
+    The regex should match both of these:
+
+      prod
+      remotes/origin/prod
+
+    While ignoring branches like these:
+
+      feature/fixed-in-prod
+      feature/fixed-in-production
+      production
+    """
     local("git fetch")
     with settings(warn_only=True):
-        result = local('git branch -a --no-merged | grep -q "prod$"')
+        result = local('git branch -a --no-merged | grep -q "[ /]prod$"')
         if not result.return_code:
             print colors.red(
                 "*** 'Prod' not MERGED into '%s' (hint: 'git pull origin prod'"

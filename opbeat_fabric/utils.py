@@ -21,7 +21,11 @@ def install_requirements(target, venv_dir):
 
         # make sure we clean up for the next guy/girl
         run('find {0} -type f ! -perm -g+w -exec chmod g+w {{}} \;'.format(
-            venv_dir))
+            venv_dir
+        ))
+        run('find {0} -not -group admin -print0 | sudo xargs -0 --no-run-if-empty chgrp admin'.format(
+            venv_dir
+        ))
 
 
 @task
