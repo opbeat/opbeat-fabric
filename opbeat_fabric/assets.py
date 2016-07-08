@@ -12,7 +12,7 @@ from fabric.api import (
 def build_assets():
     """Clear the assets dir, build assets and transfer them to web servers."""
     with lcd(env.frontend_root):
-        local('gulp prod')
+        local('npm run prod')
 
 
 @task
