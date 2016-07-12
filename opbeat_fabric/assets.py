@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 
 from fabric import colors
@@ -41,13 +42,19 @@ def sync_assets():
 def transfer_asset_metadata():
     asset_target = os.path.join(env.web_target, 'frontend', 'assets')
     run("mkdir -p %s" % asset_target)
-    put(
-        os.path.join(env.frontend_root, 'assets', "asset_manifest.json"),
-        asset_target
-    )
+
+    manifest_file = os.path.join(env.frontend_root, 'assets', "asset_manifest.json")
+    with open(manifest_file, 'r') as f:
+        app_css_name = json.loads(f.read())['app_css'][0]
+
+    app_css_hashed_file = os.path.join(env.frontend_root, app_css_name)
+    app_css_generic_file = os.path.join(env.asset_build_dir, "app-for-500.css")
+
+    local("cp %s %s" % (app_css_hashed_file, app_css_generic_file))
+
     asset_target = os.path.join(env.web_target, 'frontend', 'static', 'build')
     run("mkdir -p %s" % asset_target)
-    put(os.path.join(env.asset_build_dir, "app-for-500.css"), asset_target)
+    put(app_css_generic_file, asset_target)
 
     # run("mkdir -p %s" % asset_target + "/build/")
     # put(os.path.join(env.asset_build_dir, 'app.css'),  asset_target + "/build/")
