@@ -47,6 +47,9 @@ def transfer_asset_metadata():
     with open(manifest_file, 'r') as f:
         app_css_name = json.loads(f.read())['app_css'][0]
 
+    asset_target = os.path.join(env.web_target, 'frontend', 'assets')
+    put(manifest_file, asset_target)
+
     app_css_hashed_file = os.path.join(env.frontend_root, app_css_name)
     app_css_generic_file = os.path.join(env.asset_build_dir, "app-for-500.css")
 
