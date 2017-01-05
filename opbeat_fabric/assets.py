@@ -12,8 +12,8 @@ from fabric.context_managers import shell_env
 @runs_once
 def build_assets():
     """Clear the assets dir, build assets and transfer them to web servers."""
-    with lcd(env.frontend_root), shell_env(NODE_ENV=env.environment):
-        local('npm run prod')
+    with lcd(env.frontend_root):
+        local('npm run {}'.format(env.asset_env))
 
 
 @task
