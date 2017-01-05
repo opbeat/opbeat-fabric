@@ -12,7 +12,7 @@ from fabric.api import (
 @runs_once
 def build_assets():
     """Clear the assets dir, build assets and transfer them to web servers."""
-    with lcd(env.frontend_root):
+    with lcd(env.frontend_root), prefix('NODE_ENV=' + env.environment):
         local('npm run prod')
 
 
