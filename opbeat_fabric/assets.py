@@ -34,7 +34,7 @@ def sync_assets():
         )
         local("s3cmd --configure")
 
-    local("s3cmd --no-preserve sync {} s3://{}".format(env.asset_build_dir, env.asset_bucket))
+    local("s3cmd --add-header='Cache-Control: public, max-age=86400' --no-preserve sync {} s3://{}".format(env.asset_build_dir, env.asset_bucket))
 
 
 @task
