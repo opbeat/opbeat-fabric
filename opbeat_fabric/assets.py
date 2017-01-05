@@ -4,7 +4,7 @@ import os
 
 from fabric import colors
 from fabric.api import (
-    task, local, run, put, runs_once, parallel, env, lcd, execute,
+    task, local, run, put, runs_once, parallel, env, lcd, execute, prefix
 )
 from fabric.context_managers import shell_env
 
