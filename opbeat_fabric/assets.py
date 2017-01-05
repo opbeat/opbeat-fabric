@@ -6,13 +6,13 @@ from fabric import colors
 from fabric.api import (
     task, local, run, put, runs_once, parallel, env, lcd, execute,
 )
-
+from fabric.context_managers import shell_env
 
 @task
 @runs_once
 def build_assets():
     """Clear the assets dir, build assets and transfer them to web servers."""
-    with lcd(env.frontend_root), prefix('NODE_ENV=' + env.environment):
+    with lcd(env.frontend_root), shell_env(NODE_ENV=env.environment):
         local('npm run prod')
 
 
