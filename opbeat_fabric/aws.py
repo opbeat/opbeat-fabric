@@ -3,7 +3,6 @@ import os
 import time
 import ConfigParser
 
-from boto import ec2, route53
 from fabric.api import run, env, abort
 from fabric.contrib.console import confirm
 
@@ -51,6 +50,8 @@ def setup_instance(
     """
     Sets up a new EC2 instance. The defaults set up a new staging instance.
     """
+    from boto import ec2
+
     conn = get_connection(
         ec2.connect_to_region,
         region=region,
@@ -81,6 +82,8 @@ def terminate_instance(
         credentials_file=os.path.join(os.path.expanduser('~'), '.s3cfg'),
         region='us-east-1',
     ):
+    from boto import ec2
+
     conn = get_connection(
         ec2.connect_to_region,
         region=region,
@@ -101,6 +104,8 @@ def setup_dns(
         zone_name='opbeat.com',
         credentials_file=os.path.join(os.path.expanduser('~'), '.s3cfg'),
     ):
+    from boto import route53
+
     conn = get_connection(
         route53.connect_to_region,
         region='universal',
@@ -152,10 +157,14 @@ def _set_volume_autoterminate(instance):
 
 
 def get_connection(
-        connector=ec2.connect_to_region,
+        connector=None,
         region='us-east-1',
         credentials_file=os.path.join(os.path.expanduser('~'), '.s3cfg'),
     ):
+    from boto import ec2
+
+    if connector is None:
+        connector=ec2.connect_to_region
     access_key, secret_key = _get_access_keys_from_config(credentials_file)
     return connector(
         region,
