@@ -27,14 +27,14 @@ def transmit_assets():
 @runs_once
 def sync_assets():
     """Does the actual syncing"""
-    if not os.path.isfile(os.path.expanduser("~/.s3cfg")):
+    if not os.path.isfile(os.path.expanduser("~/.aws/config")):
         print colors.yellow(
             "*** Get your AWS credentials out.\n"
             "They are personal and not shared by the team"
         )
-        local("s3cmd --configure")
+        local("aws configure")
 
-    local("s3cmd --add-header='Cache-Control: public, max-age=86400' --no-preserve sync {} s3://{}".format(env.asset_build_dir, env.asset_bucket))
+    local('aws s3 sync {} s3://{}build/ --metadata-directive REPLACE --cache-control public,max-age=86400'.format(env.asset_build_dir, env.asset_bucket))
 
 
 @task
